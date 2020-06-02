@@ -1,0 +1,106 @@
+! System information
+!   Model                    Description                                          
+!   ------------------------ ---------------------------------------------------- 
+!   cEOSLab                  cEOSLab                                              
+! 
+!   HW Version  Serial Number  Mfg Date   Epoch 
+!   ----------- -------------- ---------- ----- 
+!                                               
+! 
+! System has 7 ports
+!   Type               Count
+!   ------------------ ----
+!   Switched           5   
+!   SwitchedBootstrap  2   
+! 
+! Command: show running-config
+! device: LEAF-cEOS-1 (cEOSLab, EOS-4.21.10M)
+!
+transceiver qsfp default-mode 4x10G
+!
+hostname LEAF-cEOS-1
+!
+spanning-tree mode mstp
+!
+aaa authorization exec default local
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 <secret hidden>
+!
+interface Port-Channel1
+   description *Uplink to NX-Spine-1*
+   no switchport
+   ip address 198.18.0.4/31
+!
+interface Port-Channel2
+   description *Uplink to SPINE-NX-2*
+   no switchport
+   ip address 198.18.0.8/31
+!
+interface Port-Channel3
+   description *Uplink to Fortigate*
+   no switchport
+   ip address 198.18.0.16/31
+!
+interface Ethernet1
+   description *Uplink to NX-Spine-1*
+   no switchport
+   channel-group 1 mode on
+!
+interface Ethernet2
+   description *Uplink to SPINE-NX-2*
+   no switchport
+   channel-group 2 mode on
+!
+interface Ethernet3
+   description *Uplink to Fortigate*
+   no switchport
+   channel-group 3 mode on
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Loopback1
+   ip address 3.3.3.3/32
+!
+interface Loopback2
+   description *TEST*
+!
+interface Loopback44
+   description Fuck
+!
+interface Loopback66
+   description TimTest
+!
+ip routing
+!
+router bgp 65002
+   router-id 3.3.3.3
+   neighbor 198.18.0.17 remote-as 65003
+   neighbor 198.18.0.17 next-hop-self
+   neighbor 198.18.0.17 update-source Ethernet3
+   neighbor 198.18.0.17 ebgp-multihop 2
+   neighbor 198.18.0.17 ttl maximum-hops 2
+   neighbor 198.18.0.17 maximum-routes 12000 
+   redistribute connected
+   !
+   address-family ipv4
+      neighbor 198.18.0.17 activate
+      network 3.3.3.3/32
+!
+router ospf 100
+   router-id 3.3.3.3
+   redistribute connected
+   network 0.0.0.0/0 area 0.0.0.0
+   max-lsa 12000
+!
+management ssh
+   authentication mode password
+!
+end
