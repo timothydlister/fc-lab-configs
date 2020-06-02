@@ -1,0 +1,104 @@
+! System information
+!   Model                    Description                                          
+!   ------------------------ ---------------------------------------------------- 
+!   cEOSLab                  cEOSLab                                              
+! 
+!   HW Version  Serial Number  Mfg Date   Epoch 
+!   ----------- -------------- ---------- ----- 
+!                                               
+! 
+! System has 7 ports
+!   Type               Count
+!   ------------------ ----
+!   Switched           5   
+!   SwitchedBootstrap  2   
+! 
+! Command: show running-config
+! device: LEAF-cEOS-2 (cEOSLab, EOS-4.21.10M)
+!
+transceiver qsfp default-mode 4x10G
+!
+hostname LEAF-cEOS-2
+!
+spanning-tree mode mstp
+!
+aaa authorization exec default local
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 <secret hidden>
+!
+interface Port-Channel1
+   description *Uplink to Spine-NX-1*
+   no switchport
+   ip address 198.18.0.6/31
+!
+interface Port-Channel2
+   description *Uplink to Spine-NX-2*
+   no switchport
+   ip address 198.18.0.2/31
+!
+interface Port-Channel3
+   description *Uplink to R1 3725*
+   no switchport
+   ip address 198.18.0.12/31
+!
+interface Port-Channel4
+   description *Uplink to CSR1000V 1*
+   no switchport
+   ip address 198.18.0.10/31
+!
+interface Port-Channel5
+   description *Uplink to Fortigate*
+   no switchport
+   ip address 198.18.0.14/31
+!
+interface Ethernet1
+   description *Uplink to Spine-NX-1*
+   no switchport
+   channel-group 1 mode on
+!
+interface Ethernet2
+   description *Uplink to Spine-NX-2*
+   no switchport
+   channel-group 2 mode on
+!
+interface Ethernet3
+   description *Uplink to R1 3725*
+   no switchport
+   channel-group 3 mode on
+!
+interface Ethernet4
+   description *Uplink to CSR1000V 1*
+   no switchport
+   channel-group 4 mode on
+!
+interface Ethernet5
+   description *Uplink to Fortigate*
+   no switchport
+   channel-group 5 mode on
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Loopback2
+   ip address 2.2.2.2/32
+!
+interface Loopback55
+   description TimTest
+!
+interface Loopback400
+   description *NewTest*
+!
+ip routing
+!
+router bgp 65001
+!
+router ospf 100
+   router-id 2.2.2.2
+   redistribute connected
+   network 0.0.0.0/0 area 0.0.0.0
+   max-lsa 12000
+!
+end
